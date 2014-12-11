@@ -9,7 +9,8 @@ sim:/test_mult/dut/a_lshift/dataOut \
 sim:/test_mult/dut/b_rshift/dataOut \
 sim:/test_mult/dut/adder/opA \
 sim:/test_mult/dut/adder/opB \
-sim:/test_mult/dut/adder/res 
+sim:/test_mult/dut/adder/res \
+sim:/test_mult/res_ok 
 
-run 10000
+run 5000
 wave zoom full
