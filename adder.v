@@ -40,11 +40,12 @@ mux2_1_1 cout_mux(c_u[8],c_l[8],carryin,carryout);
 
 endmodule
 
-module csa64(output[63:0] out, output carryout, input[63:0] opA, input[63:0] opB);
+module csa64(output[63:0] out, output carryout, input[63:0] opA, input[63:0] opB, input carryin);
 wire[8:0] carry;
+//Carryin to this module is provided for possible use in subtraction. Always hardware to 1'b0 when mult.
 
 //Yes, this looks like something to be done with a generate.
-//I wanted to use genvar * 8 as arguments for indexing but
+//I wanted to use genvar * 8 as arguments for indexing operands but
 //apparently in place multiplication of indicies is not accepted.
 workgroup8 group0(out[7:0], carry[1], opA[7:0], opB[7:0], carry[0]);
 workgroup8 group1(out[15:8], carry[2], opA[15:8], opB[15:8], carry[1]);
@@ -56,7 +57,7 @@ workgroup8 group6(out[55:48], carry[7], opA[55:48], opB[55:48], carry[6]);
 workgroup8 group7(out[63:56], carry[8], opA[63:56], opB[63:56], carry[7]);
 
 
-assign carry[0]=1'b0;
+assign carry[0]=carryin;
 assign carryout=carry[8];
 endmodule
 

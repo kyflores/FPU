@@ -16,7 +16,7 @@ sign_extend_u a_ext(opA, A_SE);
 reg64 accumulator(clk, add_res, acc_val,reset);
 and64 acc_if_true(A_SH,B_SH[0],B_add_in);
 //adder64 adder(acc_val, B_add_in, add_res);
-csa64 adder(add_res, carryout, acc_val, B_add_in);
+csa64 adder(add_res, carryout, acc_val, B_add_in, 1'b0);
 
 //This nor will raise res_ok high when the mulitplication result completes. Result completes prematurely if B has leading 0's.
 nor check_completion(res_ok,B_SH[0],B_SH[1],B_SH[2],B_SH[3],B_SH[4],B_SH[5],B_SH[6],B_SH[7],B_SH[8],B_SH[9],B_SH[10],B_SH[11],B_SH[12],B_SH[13],B_SH[14],B_SH[15],B_SH[16],B_SH[17],B_SH[18],B_SH[19],B_SH[20],B_SH[21],B_SH[22],B_SH[23],B_SH[24],B_SH[25],B_SH[26],B_SH[27],B_SH[28],B_SH[29],B_SH[30],B_SH[31]);
