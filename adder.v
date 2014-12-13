@@ -36,7 +36,7 @@ for (t = 0; t < 8; t = t + 1) begin: group_gen
 end
 endgenerate
 
-mux2_1_1 cout_mux(c_u[8],c_l[8],carryin,carryout);
+mux2_1_1s cout_mux(c_u[8],c_l[8],carryin,carryout);
 
 endmodule
 
@@ -61,11 +61,35 @@ assign carry[0]=carryin;
 assign carryout=carry[8];
 endmodule
 
+module csa32(output[31:0] out, output carryout, input[31:0] opA, input[31:0] opB, input carryin, output overflow);
+wire[4:0] carry;
+//32 bits version of the abpve. Still in groups of 8 because I don't want to write another workgroup module.
+workgroup8 group0(out[7:0], carry[1], opA[7:0], opB[7:0], carry[0]);
+workgroup8 group1(out[15:8], carry[2], opA[15:8], opB[15:8], carry[1]);
+workgroup8 group2(out[23:16], carry[3], opA[23:16], opB[23:16], carry[2]);
+workgroup8 group3(out[31:24], carry[4], opA[31:24], opB[31:24], carry[3]);
+
+xor ovf(overflow,carry[3],carry[4]);
+assign carry[0]=carryin;
+assign carryout=carry[4];
+endmodule
+
 module mux2_1_1(input in0,input in1,input sel,output out);
 wire arr[1:0];
 assign arr[0]=in0;
 assign arr[1]=in1;
 assign out=arr[sel];
+endmodule
+
+module mux2_1_1s(input in0,input in1,input sel,output out);
+wire A_out;
+wire B_out;
+wire n_sel;
+not nsel(n_sel,sel);
+
+or out_or(out,A_out,B_out);
+and aands(A_out,in0,sel);
+and bands(B_out,in1,n_sel);
 endmodule
 
 module test_adder();
@@ -74,7 +98,7 @@ reg[63:0] opB;
 wire[63:0] out;
 wire carryout;
 
-csa64 adder(out, carryout, opA, opB);
+csa64 adder(out, carryout, opA, opB, 1'b0);
 initial begin
 
 opA=63'd1947858; opB=63'd213484; #1000
