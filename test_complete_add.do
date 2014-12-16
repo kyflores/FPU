@@ -1,4 +1,4 @@
-vlog -reportprogress 300 -work work complete_add.v
+vlog -reportprogress 300 -work work complete_add.v adder.v support_modules.v multiplier.v SLT.v
 vsim -voptargs="+acc" "test_complete_add"
 add wave -position insertpoint  \
 sim:/test_complete_add/opA \
