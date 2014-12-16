@@ -36,7 +36,7 @@ for (t = 0; t < 8; t = t + 1) begin: group_gen
 end
 endgenerate
 
-mux2_1_1s cout_mux(c_u[8],c_l[8],carryin,carryout);
+mux2_1_1 cout_mux(c_u[8],c_l[8],carryin,carryout);
 
 endmodule
 
@@ -78,14 +78,24 @@ endmodule
 module test_adder();
 reg[63:0] opA;
 reg[63:0] opB;
+reg[31:0] opA32;
+reg[31:0] opB32;
 wire[63:0] out;
+wire[31:0] out32;
 wire carryout;
+wire ovf;
+wire carryout32;
 
-csa64 adder(out, carryout, opA, opB, 1'b0);
+csa64 adder64(out, carryout, opA, opB, 1'b0);
+csa32 adder32(out32, carryout32, opA32, opB32, 1'b0,ovf);
 initial begin
 
-opA=63'd1947858; opB=63'd213484; #1000
-$display("opA=%d, opB = %d",opA,opB);
-$display("Result= %d, carryout = %b",out,carryout);
+opA=64'd1947858; opB=64'd213484;
+opA32=32'hfffffffe; opB32=32'h1; #1000
+//$display("opA=%d, opB = %d",opA,opB);
+//$display("Result= %d, carryout = %b",out,carryout);
+$display("opA=%b, opB = %b",opA32,opB32);
+$display("Result= %b, carryout = %b",out32,carryout32);
+$display("EXPECTED: Result= %b",opA32+opB32);
 end
 endmodule

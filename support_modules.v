@@ -87,6 +87,13 @@ and aands(A_out,in0,sel);
 and bands(B_out,in1,n_sel);
 endmodule
 /////////////////////////////////////////////////////////////////////////////////////
+module mux2_1_32(input[31:0] in0,input[31:0] in1,input sel,output[31:0] out);
+wire[31:0] arr[1:0];
+assign arr[0]=in0;
+assign arr[1]=in1;
+assign out=arr[sel];
+endmodule
+/////////////////////////////////////////////////////////////////////////////////////
 module mux3_1_1(input in0, input in1, input in2, input sel, output out);
 wire arr[2:0];
 assign arr[0]=in0;

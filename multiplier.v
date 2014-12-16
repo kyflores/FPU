@@ -1,3 +1,22 @@
+module negate_v(input negate, input[31:0] operand, output[31:0] res);
+//multiply by -1 if negate is high.
+wire DUMMY1;
+wire DUMMY2;
+wire[31:0] n_op;
+wire[31:0] n_result;
+
+genvar t;
+generate
+for (t = 0; t < 32; t = t + 1) begin: not_arr
+    not n(n_op[t],operand[t]);
+end
+endgenerate
+//What a waste of an adder. Lol.
+csa32 add_1(n_result, DUMMY1, n_op, 32'b1, 1'b0, DUMMY2);
+mux2_1_32 negate_mux(operand, n_result, negate, res);
+
+endmodule
+
 module multiplier(input clk, input reset, input[31:0] opA, input[31:0] opB, output[64:0] res, output res_ok);
 
 wire[4:0] ct; //Counter flag
@@ -25,6 +44,18 @@ assign res=acc_val;
 
 endmodule
 
+module test_negate();
+reg[31:0] op;
+wire[31:0] out;
+reg negate;
+negate_v lol(negate, op, out);
+initial begin
+op=32'b1; negate=1'b1; #1000
+$display("Negate=%b",out);
+$display("Negate=%b",-op);
+end
+endmodule
+
 module test_mult();
 reg clk;
 initial clk=0;
@@ -32,7 +63,7 @@ always #100 clk=!clk;
 
 reg[31:0] opA;
 reg[31:0] opB;
-wire[64:0] res;
+wire[63:0] res;
 wire res_ok;
 reg reset;
 
