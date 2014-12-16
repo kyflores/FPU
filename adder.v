@@ -74,23 +74,6 @@ assign carry[0]=carryin;
 assign carryout=carry[4];
 endmodule
 
-module mux2_1_1(input in0,input in1,input sel,output out);
-wire arr[1:0];
-assign arr[0]=in0;
-assign arr[1]=in1;
-assign out=arr[sel];
-endmodule
-
-module mux2_1_1s(input in0,input in1,input sel,output out);
-wire A_out;
-wire B_out;
-wire n_sel;
-not nsel(n_sel,sel);
-
-or out_or(out,A_out,B_out);
-and aands(A_out,in0,sel);
-and bands(B_out,in1,n_sel);
-endmodule
 
 module test_adder();
 reg[63:0] opA;
@@ -105,5 +88,4 @@ opA=63'd1947858; opB=63'd213484; #1000
 $display("opA=%d, opB = %d",opA,opB);
 $display("Result= %d, carryout = %b",out,carryout);
 end
-
 endmodule
