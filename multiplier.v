@@ -70,6 +70,9 @@ endmodule
 module complete_multipler(input clk, input[31:0] opA, input[31:0] opB, input reset, output exp_ok, output[55:0] result);
 /*
 exp_ok will be high if the exponent field neither had overflow or carryout.
+res_ok is used interally to switch the output from high impedance to a value when it's ready.
+This thing outputs an awkward 56 bits. Wtf? It's because there's an 8 bit exponent and 24 bit operands.
+Multiplication outputs are twice as big as the inputs, so in order to not lose precision interally, 56 bit answer.
 */
 wire[7:0] expA;
 wire[7:0] expB;
@@ -132,7 +135,7 @@ reset=1'b0;opA=32'b00000001000000000000000000000001;opB=32'b00000001000000000000
 $display("A=%b, B=%b", opA, opB);
 $display("R=%b, exp_ok=%b",res,exp_ok);
 reset=1'b1; #1000
-reset=1'b0;opA=32'b00000011000000000000000000000111;opB=32'b00000011111111111111111111111111; #10000
+reset=1'b0;opA=32'b01000001000000000000000000000001;opB=32'b01111111111111111111111111111110; #10000
 $display("A=%b, B=%b", opA, opB);
 $display("R=%b, exp_ok=%b",res,exp_ok);
 end
