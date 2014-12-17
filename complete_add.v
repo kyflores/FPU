@@ -28,23 +28,17 @@ endmodule
 
 module sign_extend_8_to_32(input[7:0] operand, output[31:0] res);
 wire[31:0] ext[1:0];
-assign ext[0] = {24'b0,operand};
-assign ext[1] = {24'b1,operand};
+assign ext[0] = {24'h0,operand};
+assign ext[1] = {24'hffffff,operand};
 assign res = ext[operand[7]];
 endmodule
 
 module sign_extend_24_to_32(input[23:0] operand, output[31:0] res);
 wire[31:0] ext[1:0];
-assign ext[0] = {8'h0,operand};
+assign ext[0] = {8'h00,operand};
 assign ext[1] = {8'hff,operand};
 assign res = ext[operand[23]];
 endmodule
-
-//module complete_sub(input[31:0] opA, input{31:0] opB, output[31:0] res);
-
-
-
-//endmodule
 
 module complete_add(input[31:0] opA, input[31:0] opB, output[31:0] res);
 
@@ -79,8 +73,8 @@ mux2_32_bit smaller_mux(opA[31:0], opB[31:0], notcompare, smaller[31:0]);
 
 // To use structural, 2's complement smaller, sign extend larger and smaller to 32-bits, use CS adder
 // assign shifter = (larger[31:24] - smaller[31:24]);
-negate_32 opB_inverter(1'b1, smaller_exp_ext[31:0], smaller_exp_ext_neg[31:0]);
-csa32 complement_adder(shifter_ext[31:0], carryout, larger_exp_ext[31:0], smaller_exp_ext_neg[31:0], 1'b0, overflow);
+inverter_32 opB_inverter(smaller_exp_ext[31:0], smaller_exp_ext_neg[31:0]);
+csa32 complement_adder(shifter_ext[31:0], carryout, larger_exp_ext[31:0], smaller_exp_ext_neg[31:0], 1'b1, overflow);
 assign shifter = shifter_ext[7:0];
 
 bitshift_right shift_smaller(smaller[23:0], shifter[7:0], shifted_smaller[23:0]);
@@ -108,17 +102,17 @@ bitshift_right right01(op, shifter, shifted);
 
 initial begin
 opA=32'h04000004;opB=32'h020000ff;
-#2000
+#200
 $display("A=%h, B=%h", opA, opB);
 $display("sum=%h", sum);
 
 opA=32'h04000004;opB=32'h02ffffff;
-#2000
+#200
 $display("A=%h, B=%h", opA, opB);
 $display("sum=%h", sum);
 
 op=24'hfffff0ff;shifter=7'd4;
-#5
+#200
 $display("opA=%h, shifter=%d", op, shifter);
 $display("shifted=%h", shifted);
 end

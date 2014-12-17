@@ -7,6 +7,7 @@ sim:/test_complete_add/sum \
 sim:/test_complete_add/adder01/shifter \
 sim:/test_complete_add/adder01/larger \
 sim:/test_complete_add/adder01/smaller \
+sim:/test_complete_add/adder01/compare \
 
 #sim:/test_complete_add/adder01/valA_bitshift \
 #sim:/test_complete_add/adder01/valB_bitshift \

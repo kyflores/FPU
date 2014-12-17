@@ -68,6 +68,16 @@ assign carry[0]=carryin;
 assign carryout=carry[8];
 endmodule
 
+module csa24(output[23:0] out, output carryout, input[23:0] opA, input[23:0] opB, input carryin);
+wire[3:0] carry;
+wire[2:0] ovf;
+workgroup8 group0(out[7:0], carry[1], opA[7:0], opB[7:0], carry[0], ovf[0]);
+workgroup8 group1(out[15:8], carry[2], opA[15:8], opB[15:8], carry[1], ovf[1]);
+workgroup8 group2(out[23:16], carry[3], opA[23:16], opB[23:16], carry[2], ovf[2]);
+assign carry[0]=carryin;
+assign carryout=carry[3];
+endmodule
+
 module csa32(output[31:0] out, output carryout, input[31:0] opA, input[31:0] opB, input carryin, output overflow);
 wire[4:0] carry;
 wire[3:0] ovf;
