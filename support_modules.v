@@ -82,9 +82,9 @@ wire A_out;
 wire B_out;
 wire n_sel;
 not nsel(n_sel,sel);
-or out_or(out,A_out,B_out);
 and aands(A_out,in0,sel);
 and bands(B_out,in1,n_sel);
+or out_or(out,A_out,B_out);
 endmodule
 /////////////////////////////////////////////////////////////////////////////////////
 module mux2_1_32(input[31:0] in0,input[31:0] in1,input sel,output[31:0] out);
