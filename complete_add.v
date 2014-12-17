@@ -1,6 +1,7 @@
 module bitshift_right(input[23:0] opA, input[7:0] shift, output[23:0] shifted_opA);
-// This needs to sign extend so that subtraction and addition with negative numbers works
-assign shifted_opA = (opA >> shift);
+
+assign shifted_opA = ($signed(opA) >>> shift);
+
 endmodule
 
 module bitshift_left(input[23:0] opA, input[7:0] shift, output[23:0] shifted_opA);
@@ -39,6 +40,12 @@ assign ext[1] = {8'b1,operand};
 assign res = ext[operand[23]];
 endmodule
 
+//module complete_sub(input[31:0] opA, input{31:0] opB, output[31:0] res);
+
+
+
+//endmodule
+
 module complete_add(input[31:0] opA, input[31:0] opB, output[31:0] res);
 
 wire compare;
@@ -52,9 +59,8 @@ wire[31:0] smaller_exp_ext_neg;
 wire[31:0] shifter_ext;
 wire[7:0] shifter;
 wire[23:0] shifted_smaller;
-wire[31:0] sum_val;
+wire[23:0] sum_val;
 wire carryout, overflow;
-wire[31:0] larger_ext, shifted_smaller_ext;
 
 sign_extend_8_to_32 ext_expA(opA[31:24], expA_ext[31:0]);
 sign_extend_8_to_32 ext_expB(opB[31:24], expB_ext[31:0]);
@@ -81,9 +87,7 @@ bitshift_right shift_smaller(smaller[23:0], shifter[7:0], shifted_smaller[23:0])
 
 // To use structural, sign extend larger and shifted_smaller to 32-bits, use CS adder
 // assign sum_val[23:0] = (larger[23:0] + shifted_smaller[23:0]);
-sign_extend_24_to_32 ext_larger2(larger[23:0], larger_ext[31:0]);
-sign_extend_24_to_32 ext_smaller2(shifted_smaller[23:0], shifted_smaller_ext[31:0]);
-csa32 val_adder(sum_val[31:0], carryout, larger_ext[31:0], shifted_smaller_ext[31:0], 1'b0, overflow);
+csa24 val_adder(sum_val[23:0], carryout, larger[23:0], shifted_smaller[23:0], 1'b0);
 
 assign res = {larger[31:24],sum_val[23:0]};
 
@@ -95,13 +99,28 @@ reg[31:0] opA;
 reg[31:0] opB;
 wire[31:0] sum;
 
+reg[23:0] op;
+reg[7:0] shifter;
+wire[23:0] shifted;
+
 complete_add adder01(opA, opB, sum);
+bitshift_right right01(op, shifter, shifted);
 
 initial begin
 opA=32'h04000004;opB=32'h020000ff;
-#4000
+#2000
 $display("A=%h, B=%h", opA, opB);
 $display("sum=%h", sum);
+
+opA=32'h04000004;opB=32'h02ffffff;
+#2000
+$display("A=%h, B=%h", opA, opB);
+$display("sum=%h", sum);
+
+op=24'hfffff0ff;shifter=7'd4;
+#5
+$display("opA=%h, shifter=%d", op, shifter);
+$display("shifted=%h", shifted);
 end
 
 endmodule
