@@ -40,8 +40,15 @@ assign ext[1] = {8'hff,operand};
 assign res = ext[operand[23]];
 endmodule
 
-module complete_add(input[31:0] opA, input[31:0] opB, output[31:0] res);
+module sign_extend_32_to_56(input[31:0] operand, output[55:0] res);
+wire[55:0] ext[1:0];
+assign ext[0] = {24'h000000,operand};
+assign ext[1] = {24'hffffff,operand};
+assign res = ext[operand[31]];
+endmodule
 
+module complete_add(input[31:0] opA, input[31:0] opB, input carryin, output[31:0] res, output final_carryout, output final_overflow);
+// Add if carry in is 0, subtract if carry in is 1
 wire compare;
 wire notcompare;
 wire[31:0] expA_ext, expB_ext;
@@ -81,7 +88,7 @@ bitshift_right shift_smaller(smaller[23:0], shifter[7:0], shifted_smaller[23:0])
 
 // To use structural, sign extend larger and shifted_smaller to 32-bits, use CS adder
 // assign sum_val[23:0] = (larger[23:0] + shifted_smaller[23:0]);
-csa24 val_adder(sum_val[23:0], carryout, larger[23:0], shifted_smaller[23:0], 1'b0);
+csa24 val_adder(sum_val[23:0], final_carryout, final_overflow, larger[23:0], shifted_smaller[23:0], carryin);
 
 assign res = {larger[31:24],sum_val[23:0]};
 
@@ -92,24 +99,26 @@ module test_complete_add();
 reg[31:0] opA;
 reg[31:0] opB;
 wire[31:0] sum;
+wire carry;
+wire ovf;
 
 reg[23:0] op;
 reg[7:0] shifter;
 wire[23:0] shifted;
 
-complete_add adder01(opA, opB, sum);
+complete_add adder01(opA, opB, 1'b0, sum, carry, ovf);
 bitshift_right right01(op, shifter, shifted);
 
 initial begin
 opA=32'h04000004;opB=32'h020000ff;
 #200
 $display("A=%h, B=%h", opA, opB);
-$display("sum=%h", sum);
+$display("sum=%h, carry=%b, ovf=%b", sum, carry, ovf);
 
 opA=32'h04000004;opB=32'h02ffffff;
 #200
 $display("A=%h, B=%h", opA, opB);
-$display("sum=%h", sum);
+$display("sum=%h, carry=%b, ovf=%b", sum, carry, ovf);
 
 op=24'hfffff0ff;shifter=7'd4;
 #200

@@ -67,7 +67,7 @@ nor check_completion(res_ok,B_SH[0],B_SH[1],B_SH[2],B_SH[3],B_SH[4],B_SH[5],B_SH
 
 endmodule
 
-module complete_multipler(input clk, input[31:0] opA, input[31:0] opB, input reset, output exp_ok, output[55:0] result);
+module complete_multiplier(input clk, input[31:0] opA, input[31:0] opB, input reset, output exp_ok, output[55:0] result);
 /*
 exp_ok will be high if the exponent field neither had overflow or carryout.
 res_ok is used interally to switch the output from high impedance to a value when it's ready.

@@ -108,3 +108,19 @@ assign arr[1]=in1;
 assign arr[2]=in2;
 assign out=arr[sel];
 endmodule
+/////////////////////////////////////////////////////////////////////////////////////
+module mux3_1_56(input[55:0] in0, input[55:0] in1, input[55:0] in2, input[1:0] sel, output[55:0] out);
+wire[55:0] arr[2:0];
+assign arr[0]=in0;
+assign arr[1]=in1;
+assign arr[2]=in2;
+assign out=arr[sel];
+endmodule
+/////////////////////////////////////////////////////////////////////////////////////
+module mux3_1_2(input[1:0] in0, input[1:0] in1, input[1:0] in2, input[1:0] sel, output[1:0] out);
+wire[1:0] arr[2:0];
+assign arr[0]=in0;
+assign arr[1]=in1;
+assign arr[2]=in2;
+assign out=arr[sel];
+endmodule
