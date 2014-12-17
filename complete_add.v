@@ -35,8 +35,8 @@ endmodule
 
 module sign_extend_24_to_32(input[23:0] operand, output[31:0] res);
 wire[31:0] ext[1:0];
-assign ext[0] = {8'b0,operand};
-assign ext[1] = {8'b1,operand};
+assign ext[0] = {8'h0,operand};
+assign ext[1] = {8'hff,operand};
 assign res = ext[operand[23]];
 endmodule
 

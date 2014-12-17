@@ -67,6 +67,39 @@ nor check_completion(res_ok,B_SH[0],B_SH[1],B_SH[2],B_SH[3],B_SH[4],B_SH[5],B_SH
 
 endmodule
 
+module complete_multipler(input clk, input[31:0] opA, input[31:0] opB, input reset, output exp_ok, output[55:0] result);
+/*
+exp_ok will be high if the exponent field neither had overflow or carryout.
+*/
+wire[7:0] expA;
+wire[7:0] expB;
+wire[23:0] vA24;
+wire[31:0] vA32;
+wire[23:0] vB24;
+wire[31:0] vB32;
+wire[63:0] mult_raw_res;
+wire[7:0] exp_res;
+wire res_ok;
+wire exp_overflow;
+wire exp_carryout;
+wire[55:0] temp_res[1:0];
+assign expA=opA[31:24];
+assign expB=opB[31:24];
+assign vA24=opA[23:0];
+assign vB24=opB[23:0];
+sign_extend_24_to_32 SEvA24(vA24, vA32);
+sign_extend_24_to_32 SEvB24(vB24, vB32);
+
+workgroup8 expadd(exp_res, exp_carryout, expA, expB, 1'b0, exp_overflow);
+multiplier mult(clk, reset, vA32, vB32, mult_raw_res, res_ok);
+nor exp_check(exp_ok,exp_carryout,exp_overflow);
+assign temp_res[0]=56'bz;
+assign temp_res[1]={exp_res,mult_raw_res[47:0]};
+assign result=temp_res[res_ok];
+
+
+endmodule
+
 module test_negate();
 reg[31:0] op;
 wire[31:0] out;
@@ -86,22 +119,22 @@ always #100 clk=!clk;
 
 reg[31:0] opA;
 reg[31:0] opB;
-wire[63:0] res;
-wire res_ok;
+wire[55:0] res;
+wire exp_ok;
 reg reset;
 
-multiplier dut(clk, reset, opA, opB, res, res_ok);
+complete_multipler dut(clk, opA, opB, reset, exp_ok, res);
 
 initial begin
 reset=1'b0; #100
 reset=1'b1; #100
-reset=1'b0;opA=32'd15;opB=32'd13; #4000
+reset=1'b0;opA=32'b00000001000000000000000000000001;opB=32'b00000001000000000000000000000001; #10000
 $display("A=%b, B=%b", opA, opB);
-$display("R=%b",res);
-reset=1'b1; #100
-reset=1'b0;opA=32'b11111111111111111111111111110001;opB=32'd13; #4000
+$display("R=%b, exp_ok=%b",res,exp_ok);
+reset=1'b1; #1000
+reset=1'b0;opA=32'b00000011000000000000000000000111;opB=32'b00000011111111111111111111111111; #10000
 $display("A=%b, B=%b", opA, opB);
-$display("R=%b",res);
+$display("R=%b, exp_ok=%b",res,exp_ok);
 end
 
 endmodule
